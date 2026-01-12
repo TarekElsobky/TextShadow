@@ -1,0 +1,115 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generate Key - Text Shadow</title>
+<link rel="stylesheet" href="{% static "style.css" %}">
+</head>
+
+<body>
+<div class="wrapper">
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Text Shadow</h2>
+            <div class="hamburger" id="hamburger">&#9776;</div>
+        </div>
+
+        <div class="nav-links" id="nav-links">
+            <a href="{% url 'Landing' %}">Home</a>
+            <a href="{% url 'Generate key' %}">Generate Key</a>
+            <a href="{% url 'Hide message' %}">Hide Message</a>
+            <a href="{% url 'Extract message' %}">Extract Message</a>
+        </div>
+    </nav>
+
+    <main class="content">
+        <div class="card">
+            <h2>Generate Key</h2>
+            <form id="key-form" method="post" action="{% url "Generate key" %}">
+                {% csrf_token %}
+                <label>Key Length</label>
+                <input type="text" placeholder="e.g. 16" name="length" value="256" disabled>
+
+                <label>Optional Seed</label>
+                <input type="text" placeholder="Optional seed" name="seed" id="seed">
+
+                <button type="submit">Generate Key</button>
+            </form>
+            <!-- Modal structure -->
+            <div id="keyModal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span id="closeModal" class="close">&times;</span>
+                    <h2>Generated Key</h2>
+                    <input type="text" id="generatedKey" readonly style="width: 100%; padding: 8px; font-family: monospace;">
+                    <button id="copyBtn">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</div>
+
+<script>
+    const form = document.getElementById("key-form");
+    const modal = document.getElementById("keyModal");
+    const keyInput = document.getElementById("generatedKey");
+    const closeModal = document.getElementById("closeModal");
+    const copyBtn = document.getElementById("copyBtn");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const seed = document.getElementById("seed").value;
+        const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+        const response = await fetch("{% url "Generate key" %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({ seed })
+        });
+
+        const data = await response.json();
+        const key = data.generated_key;
+
+        // Show key in modal
+        keyInput.value = key;
+        modal.style.display = "flex";
+    });
+
+    // Close modal
+    closeModal.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if(e.target == modal) modal.style.display = "none"; }
+
+    // Copy button
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(keyInput.value).then(() => {
+            copyBtn.textContent = "Copied!";
+
+            // Auto-close the modal after copying
+            setTimeout(() => {
+                modal.style.display = "none";   // close modal
+                copyBtn.textContent = "Copy to Clipboard"; // reset button text
+            }, 500); // short delay so user sees "Copied!"
+            
+        }).catch(err => console.error("Failed to copy: ", err));
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+
+        if(hamburger && navLinks){
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('show');
+            });
+        }
+    });
+</script>
+</body>
+</html>

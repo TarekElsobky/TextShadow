@@ -1,0 +1,273 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    background: #121212;
+    color: #ffffff;
+}
+
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background: #1c1c1c;
+    padding: 20px;
+}
+
+/* ADDED: wrap header + hamburger into flex container */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between; /* title left, hamburger right */
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #2a2a2a;
+    margin-bottom: 15px;
+}
+
+/* Adjust sidebar h2 for header (left aligned, no bottom margin) */
+.sidebar h2 {
+    margin: 0;  /* remove default top margin */
+    font-weight: bold;
+    color: #4da3ff;
+    user-select: none;
+}
+
+/* Hamburger icon */
+.hamburger {
+    display: none; /* hide by default on desktop */
+    font-size: 28px;
+    cursor: pointer;
+    color: #4da3ff;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.hamburger:hover {
+    color: #6ab3ff;
+}
+
+.sidebar a {
+    display: block;
+    padding: 12px;
+    margin: 8px 0;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.sidebar a:hover {
+    background: #2a2a2a;
+}
+
+/* Content */
+.content {
+    flex: 1;
+    padding: 30px;
+}
+
+.card {
+    max-width: 700px;
+    margin: auto;
+    background: #1e1e1e;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.card h1,
+.card h2 {
+    color: #4da3ff;
+    margin-top: 0;
+}
+
+/* Forms */
+form label {
+    display: block;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+form input,
+form textarea,
+.form-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #ffffff;
+}
+
+form button,
+.btn {
+    margin-top: 20px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #4da3ff;
+    color: #000;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        padding: 15px 20px;
+        background: #1c1c1c;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    }
+
+    .nav-links {
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.3s ease-out;
+        flex-direction: column;
+        display: flex; /* keep flex for direction */
+        margin-top: 10px;
+    }
+
+    .nav-links.show {
+        max-height: 500px;
+        /* if you want smoother slide effect, consider also adding transition on padding */
+    }
+
+    .nav-links a {
+        padding: 12px 10px;
+        margin: 5px 0;
+        border-radius: 6px;
+    }
+
+    .hamburger {
+        display: block; /* show hamburger icon */
+    }
+
+    /* ADDED: remove text-align center from sidebar h2 on small screens */
+    .sidebar h2 {
+        text-align: left;
+    }
+}
+
+/* ===================== Modal ===================== */
+
+/* Modal overlay */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(18, 18, 18, 0.95);
+    /* dark transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+/* Modal box */
+.modal-content {
+    background: #1e1e1e;
+    /* same as card */
+    padding: 25px;
+    border-radius: 10px;
+    width: 400px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 0 20px rgba(77, 163, 255, 0.3);
+    /* subtle blue glow */
+    animation: slideDown 0.2s ease-out;
+    position: relative;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 22px;
+    color: #4da3ff;
+    transition: color 0.2s;
+}
+
+.close:hover {
+    color: #1c1c1c;
+    background: #4da3ff;
+    border-radius: 50%;
+    padding: 2px 7px;
+}
+
+/* Heading */
+.modal-content h2 {
+    color: #4da3ff;
+    margin-bottom: 20px;
+}
+
+/* Input inside modal */
+#generatedKey {
+    width: 100%;
+    padding: 10px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 6px;
+    color: #ffffff;
+    font-family: monospace;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+/* Copy button */
+#copyBtn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background: #4da3ff;
+    color: #000;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+#copyBtn:hover {
+    background: #6ab3ff;
+    transform: scale(1.02);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

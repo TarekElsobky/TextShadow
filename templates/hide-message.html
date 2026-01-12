@@ -1,0 +1,119 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hide Message - Text Shadow</title>
+<link rel="stylesheet" href="{% static "style.css" %}">
+</head>
+
+<body>
+<div class="wrapper">
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Text Shadow</h2>
+            <div class="hamburger" id="hamburger">&#9776;</div>
+        </div>
+
+        <div class="nav-links" id="nav-links">
+            <a href="{% url "Landing" %}">Home</a>
+            <a href="{% url "Generate key" %}">Generate Key</a>
+            <a href="{% url "Hide message" %}">Hide Message</a>
+            <a href="{% url "Extract message" %}">Extract Message</a>
+        </div>
+    </nav>
+
+    <main class="content">
+        <div class="card">
+            <h2>Hide Message</h2>
+            <form id="hide-message-form" method="post" action="{% url "Hide message" %}">
+                {% csrf_token %}
+                <label>Key</label>
+                <input type="text" placeholder="Enter secret key" name="key" required class="form-input">
+
+                <label>Hidden Message</label>
+                <textarea rows="3" placeholder="Message to hide" name="s_message" required class="form-input"></textarea>
+
+                <label>Mask Message</label>
+                <textarea rows="3" placeholder="Cover text" name="c_message" required class="form-input"></textarea>
+
+                <button type="submit" class="btn">Hide Message</button>
+            </form>
+            <!-- Modal for combined message -->
+            <div id="messageModal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span id="closeMessageModal" class="close">&times;</span>
+                    <h2>Combined Message</h2>
+                    <input type="text" id="combinedMessage" readonly class="form-input">
+                    <button id="copyMessageBtn" class="btn">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script>
+    const hideForm = document.getElementById("hide-message-form");
+    const modal = document.getElementById("messageModal");
+    const messageInput = document.getElementById("combinedMessage");
+    const closeModal = document.getElementById("closeMessageModal");
+    const copyBtn = document.getElementById("copyMessageBtn");
+
+    hideForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const key = hideForm.querySelector("[name='key']").value;
+        const secret = hideForm.querySelector("[name='s_message']").value;
+        const cover = hideForm.querySelector("[name='c_message']").value;
+        const csrfToken = hideForm.querySelector("[name=csrfmiddlewaretoken]").value;
+
+        const response = await fetch("{% url 'Hide message' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({
+                key: key,
+                s_message: secret,
+                c_message: cover
+            })
+        });
+
+        const data = await response.json();
+        const combined = data.combined_message;
+
+        // Show the modal
+        messageInput.value = combined;
+        modal.style.display = "flex";
+    });
+
+    // Close modal
+    closeModal.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if(e.target == modal) modal.style.display = "none"; }
+
+    // Copy button
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(messageInput.value).then(() => {
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => {
+                modal.style.display = "none";  // auto-close modal
+                copyBtn.textContent = "Copy to Clipboard";
+            }, 500);
+        }).catch(err => console.error("Failed to copy message: ", err));
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const hamburger = document.getElementById("hamburger");
+        const navLinks = document.getElementById("nav-links");
+
+        if(hamburger && navLinks){
+            hamburger.addEventListener("click", () => {
+                navLinks.classList.toggle("show");
+            });
+        }
+    });
+</script>
+</body>
+</html>

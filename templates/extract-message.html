@@ -1,0 +1,116 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Extract Message - Text Shadow</title>
+<link rel="stylesheet" href="{% static "style.css" %}">
+</head>
+
+<body>
+<div class="wrapper">
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Text Shadow</h2>
+            <div class="hamburger" id="hamburger">&#9776;</div>
+        </div>
+
+        <div class="nav-links" id="nav-links">
+            <a href="{% url "Landing" %}">Home</a>
+            <a href="{% url "Generate key" %}">Generate Key</a>
+            <a href="{% url "Hide message" %}">Hide Message</a>
+            <a href="{% url "Extract message" %}">Extract Message</a>
+        </div>
+    </nav>
+
+    <main class="content">
+        <div class="card">
+            <h2>Extract Message</h2>
+            <form method="post" action="Extract message">
+                {% csrf_token %}
+                <label>Key</label>
+                <input type="text" placeholder="Enter secret key" name="key">
+
+                <label>Combined Message</label>
+                <textarea rows="5" placeholder="Paste combined message" name="combined_message"></textarea>
+
+                <button type="submit">Extract Message</button>
+            </form>
+            <!-- Modal for extracted message -->
+            <div id="extractModal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span id="closeExtractModal" class="close">&times;</span>
+                    <h2>Extracted Message</h2>
+                    <textarea id="extractedMessage" readonly class="form-input"></textarea>
+                    <button id="copyExtractBtn" class="btn">Copy to Clipboard</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+</div>
+
+<script>
+    const extractForm = document.querySelector("form");
+    const modal = document.getElementById("extractModal");
+    const messageArea = document.getElementById("extractedMessage");
+    const closeModal = document.getElementById("closeExtractModal");
+    const copyBtn = document.getElementById("copyExtractBtn");
+
+    extractForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const key = extractForm.querySelector("[name='key']").value;
+        const combined = extractForm.querySelector("[name='combined_message']").value;
+        const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+        const response = await fetch("{% url 'Extract message' %}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({ key: key, combined_message: combined })
+        });
+
+        const data = await response.json();
+        const message = data.message;
+
+        // Show modal
+        messageArea.value = message;
+        modal.style.display = "flex";
+    });
+
+    // Close modal
+    closeModal.onclick = () => modal.style.display = "none";
+    window.onclick = (e) => { if(e.target == modal) modal.style.display = "none"; }
+
+    // Copy button
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(messageArea.value).then(() => {
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => {
+                modal.style.display = "none";  // auto-close
+                copyBtn.textContent = "Copy to Clipboard";
+            }, 500);
+        }).catch(err => console.error("Failed to copy message: ", err));
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const hamburger = document.getElementById("hamburger");
+        const navLinks = document.getElementById("nav-links");
+
+        if(hamburger && navLinks){
+            hamburger.addEventListener("click", () => {
+                navLinks.classList.toggle("show");
+            });
+        }
+    });
+</script>
+
+
+</body>
+</html>

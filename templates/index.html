@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Shadow</title>
+<link rel="stylesheet" href="{% static "style.css" %}">
+</head>
+
+<body>
+<div class="wrapper">
+
+    {% comment %} <nav class="sidebar">
+        <h2>Text Shadow</h2>
+        <a href="{% url "Landing" %}">Home</a>
+        <a href="{% url "Generate key" %}">Generate Key</a>
+        <a href="{% url "Hide message" %}">Hide Message</a>
+        <a href="{% url "Extract message" %}">Extract Message</a>
+    </nav> {% endcomment %}
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>Text Shadow</h2>
+            <div class="hamburger" id="hamburger">&#9776;</div>
+        </div>
+
+        <div class="nav-links" id="nav-links">
+            <a href="{% url 'Landing' %}">Home</a>
+            <a href="{% url 'Generate key' %}">Generate Key</a>
+            <a href="{% url 'Hide message' %}">Hide Message</a>
+            <a href="{% url 'Extract message' %}">Extract Message</a>
+        </div>
+    </nav>
+
+
+
+
+    <main class="content">
+        <div class="card">
+            <h1>Text Shadow</h1>
+            <p>
+                Text Shadow is a secure and minimal interface for hiding and extracting
+                secret messages inside plain text using a secret key. 
+                It leverages modern cryptography and clean design to ensure safety
+                and usability.
+            </p>
+
+            <h2>Features</h2>
+            <ul>
+                <li>Generate secure keys with optional seeds</li>
+                <li>Hide secret messages inside cover text</li>
+                <li>Extract hidden messages using the correct key</li>
+                <li>Copy keys or messages to clipboard easily</li>
+                <li>Modern responsive UI with minimal distractions</li>
+            </ul>
+
+            <h2>How It Works</h2>
+            <p>
+                1. Generate a secure key or use your own seed.<br>
+                2. Use "Hide Message" to combine your secret message with cover text.<br>
+                3. Copy the combined message and share safely.<br>
+                4. Use "Extract Message" with the same key to retrieve your hidden message.
+            </p>
+
+            <h2>Important Notes</h2>
+            <p>
+                - Keep your secret key safe; without it, your hidden messages cannot be extracted.<br>
+                - The combined message can be shared over any text platform securely.<br>
+                - This tool does not store your keys or messages on the server — everything happens client-side or in your session.
+            </p>
+
+            <h2>About the Developer</h2>
+            <p><strong>Developer:</strong> Sobex</p>
+            <p>Website designed with focus on simplicity, privacy, and modern UI principles.</p>
+        </div>
+    </main>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+
+        if(hamburger && navLinks){
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('show');
+            });
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Shadow</title>
+<link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+<div class="wrapper">
+
+    <nav class="sidebar">
+        <h2>Text Shadow</h2>
+        <a href="{% url 'Landing' %}">Home</a>
+        <a href="{% url 'Generate key' %}">Generate Key</a>
+        <a href="{% url 'Hide message' %}">Hide Message</a>
+        <a href="{% url 'Extract message' %}">Extract Message</a>
+    </nav>
+
+    <main class="content">
+        <div class="card">
+            <h1>Text Shadow</h1>
+            <p>
+                Text Shadow is a secure and minimal interface for hiding and extracting
+                secret messages inside plain text using a secret key.
+            </p>
+            <p>
+                This project focuses on clean design, responsiveness, and seamless
+                backend integration for cryptography or steganography systems.
+            </p>
+            <p><strong>Developer:</strong> Sobex</p>
+        </div>
+    </main>
+
+</div>
+</body>
+</html>
